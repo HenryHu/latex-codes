@@ -2,6 +2,10 @@
 #include <cmath>
 #include "stdint.h"
 #include <algorithm>
+#include "assert.h"
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
 
 using namespace std;
 
@@ -50,4 +54,30 @@ void eliminate(double **a, int n, int np)
     delete [] th;
   }
 }
-int main() {}
+
+void usage(int argc, char *argv[])
+{
+  printf("Usage\n\t%s <# of threads>\n", argv[0]);
+  exit(-1);
+}
+
+int main(int argc, char *argv[]) 
+{
+  int n;
+  double **a; 
+  int np;
+  if (argc < 2)
+    usage(argc, argv);
+  np = atoi(argv[1]);
+  cin >> n;
+  a = new double*[n];
+  for (int i = 0; i < n; ++i) a[i] = new double[n];
+  for (int i = 0; i < n; ++i) for (int j = 0; j < n; ++j) cin >> a[i][j];
+  eliminate(a, n, np); 
+  for (int i = 0; i < n; ++i) 
+  {
+    for (int j = 0; j < n; ++j) printf("%.2lf ", a[i][j]);
+    printf("\n");
+  }
+  return 0;
+}

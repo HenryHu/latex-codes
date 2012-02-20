@@ -1,3 +1,10 @@
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include "mpi.h"
+
+using namespace std;
+
 #define TAG 0
 
 //  global variables;
@@ -27,16 +34,16 @@ void main_proc(int myid, int numprocs)
     for (int i = 0; i < wp; ++i)
     {
       int args[4];
-      args[0] = (void*)k;
+      args[0] = (int)k;
       if (i < p)
       {
-        args[1] = (void*)(k + 1 + i * block_size);
-        args[2] = (void*) min(
+        args[1] = (int)(k + 1 + i * block_size);
+        args[2] = (int) min(
           k + 1 + (i + 1) * block_size,
           n - 1);
       } else
         args[1] = args[2] = -1;
-      args[3] = (void*)n;
+      args[3] = (int)n;
 
       MPI_Send(args, sizeof(args), MPI_CHAR, i + 1, TAG, MPI_COMM_WORLD);
       if (args[1] >= 0 && args[2] >= 0)
@@ -53,16 +60,16 @@ void main_proc(int myid, int numprocs)
     for (int i = 0; i < wp; ++i)
     {
       int args[4];
-      args[0] = (void*)k;
+      args[0] = (int)k;
       if (i < p)
       {
-        args[1] = (void*)(k + 1 + i * block_size);
-        args[2] = (void*) min(
+        args[1] = (int)(k + 1 + i * block_size);
+        args[2] = (int) min(
           k + 1 + (i + 1) * block_size,
           n - 1);
       } else
         args[1] = args[2] = -1;
-      args[3] = (void*)n;
+      args[3] = (int)n;
 
       if (args[1] >= 0 && args[2] >= 0)
       {
@@ -86,8 +93,11 @@ void worker_proc(int myid, int numprocs)
     {
       int k = args[0];
       int n = args[3];
-      double []x = new double[n];
-      double [][]y = new double[args[2] - args[1] + 1][n];
+      double *x = new double[n];
+      double **y = new double*[args[2] - args[1] + 1];
+      for (int i = 0; i < args[2] - args[1] + 1; ++i) 
+        y[i] = new double[n];
+
       MPI_Recv(x, sizeof(x[0]) * n, MPI_CHAR, 0, TAG, MPI_COMM_WORLD, &stat);
       for (int i = 0; i < args[2] - args[1] + 1; ++i)
         MPI_Recv(y[i], sizeof(x[0]) * n, MPI_CHAR, 0, TAG, 
@@ -100,11 +110,13 @@ void worker_proc(int myid, int numprocs)
       }
       for (int i = 0; i < args[2] - args[1] + 1; ++i)
         MPI_Send(y[i], sizeof(x[0]) * n, MPI_CHAR, 0, TAG, MPI_COMM_WORLD);
+
+      //    TODO free memory
     }
   }
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   int numprocs;
   int myid;
