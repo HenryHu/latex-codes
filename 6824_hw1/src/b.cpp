@@ -33,6 +33,7 @@ void eliminate(double **a, int n, int np)
     for (int j = k + 1; j < n; ++j) a[k][j] /= a[k][k];
     a[k][k] = 1;
     int p = min(np, n - k - 1); //  the number of max avaiable proc
+    if (!p) continue;
     int block_size = (n - k - 2) / p + 1; //  get block size for each
 
     pthread_t *th = new pthread_t[p];
