@@ -1,8 +1,11 @@
+
+
 %template for producing IEEE-format articles using LaTex.
 %written by Matthew Ward, CS Department, Worcester Polytechnic Institute. 
 %use at your own risk. Complaints to /dev/null.
 %make two column with no page numbering, default is 10-point 
-\documentstyle[twocolumn,psfig]{article}
+\documentstyle[11pt,psfig,setspace]{article}
+%\documentclass[psfig, 11pt]{article}
 \pagestyle{empty}
 %set dimensions of columns, gap between columns, and paragraph indent 
 \setlength{\textheight}{8.75in}
@@ -14,11 +17,15 @@
 \setlength{\headsep}{0.0in}
 \setlength{\oddsidemargin}{-.19in}
 \setlength{\parindent}{1pc}
+
+%\usepackage{setspace}
+\doublespacing
+
 %I copied stuff out of art10.sty and modified them to conform to IEEE format
 \makeatletter
 %as Latex considers descenders in its calculation of interline spacing,
 %to get 12 point spacing for normalsize text, must set it to 10 points 
-\def\@normalsize{\@setsize\normalsize{10pt}\xpt\@xpt
+\def\@normalsize{\@setsize\normalsize{11pt}\xpt\@xpt
 \abovedisplayskip 10pt plus2pt minus5pt\belowdisplayskip 
 \abovedisplayskip \abovedisplayshortskip \z@ 
 plus3pt\belowdisplayshortskip 6pt plus3pt 
