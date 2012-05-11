@@ -1,0 +1,10 @@
+\section{Microbenchmarks}
+To evaluate our hypothesis, we created several microbenchmarks, and we inspected the results to see if the scalability problems come from these aspects.
+
+\subsection{Lock}
+We created two micro-benchmarks to evaluate the performance of the virtual machine when compared with the performance of the native case.
+
+In the first micro-benchmark, we create a number of threads. In each thread, we repeatedly lock and unlock the lock owned by itself. So, there is no contention on the locks. Ideally, the execution time should be the same for any number of threads, as long as the thread number is less than the number of cores.  However, since these locks are allocated in the same array, they usually stay on the same cache line, so the cores may still compete for the cache line, so there would be some overhead.
+In table {\todo}, we can see the execution time of the microbenchmark in the virtual machine and in the native environment.
+
+
