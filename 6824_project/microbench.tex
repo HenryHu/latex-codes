@@ -1,10 +1,129 @@
 \section{Microbenchmarks}
-To evaluate our hypothesis, we created several microbenchmarks, and we inspected the results to see if the scalability problems come from these aspects.
+To evaluate our hypothesis, we created several microbenchmarks, and we inspected
+the results to see if the scalability problems come from these aspects.
+In these experiments, we run each experiment for 5 times and take the average
+as the result.
 
 \subsection{Lock}
-We created two micro-benchmarks to evaluate the performance of the virtual machine when compared with the performance of the native case.
+We created two micro-benchmarks to evaluate the performance of the virtual
+machine when compared with the performance of the native case.
 
-In the first micro-benchmark, we create a number of threads. In each thread, we repeatedly lock and unlock the lock owned by itself. So, there is no contention on the locks. Ideally, the execution time should be the same for any number of threads, as long as the thread number is less than the number of cores.  However, since these locks are allocated in the same array, they usually stay on the same cache line, so the cores may still compete for the cache line, so there would be some overhead.
-In table {\todo}, we can see the execution time of the microbenchmark in the virtual machine and in the native environment.
+In the first micro-benchmark, we create a number of threads. In each thread, 
+we repeatedly lock and unlock the lock owned by itself. So, there is no 
+contention on the locks. Ideally, the execution time should be the same for any 
+number of threads, as long as the thread number is less than the number of 
+cores.  However, since these locks are allocated in the same array, they usually
+stay on the same cache line, so the cores may still compete for the cache line,
+so there would be some overhead.
 
+In this benchmark, each thread iterates for $10^7$ times.
+In table ~\ref{fig:sep_mutex}, we can see the execution time of the
+microbenchmark in the virtual machine and in the native environment.
+From this table, we can see that the overhead of the virtual machine reduces as
+the number of cores increases at first, and then keeps at a constant level.
+It seems like that the virtual machine does not have scalability problem in
+this micro-benchmark.
+We can also observe that the execution time does not increase much as the
+number of threads increases. This meets our expectation that the execution
+time should keep still. The small increase may be caused by the cache
+contention problem, that different cores compete for the same cache line.
+
+\begin{figure}[here]
+\begin{tabular}{  l | l | l | l  }
+	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
+	1 & 9.236 & 0.32 & 2786.25 \\ 
+	2 & 17.404 & 1.52 & 1045.00 \\
+	4 & 17.564 & 1.51 & 1063.18 \\
+	8 & 16.420 & 1.77 & 827.68 \\
+	16 & 17.824 & 1.82 & 879.34 \\
+	32 & 16.172 & 1.97 & 820.91 \\
+\end{tabular}
+\caption{Execution time of the separated locks micro-benchmark}
+\label{fig:sep_mutex}
+\end{figure}
+
+In the second micro-benchmark, we also create some threads. But in this
+benchmark, all the threads try to lock and unlock the same lock. So, all the
+threads compete for the same lock, and it is expected that there would be many
+contentions.  Since there is only one lock, the ownership of this cache line
+would be frequently transferred between different cores, and this would cause
+much overhead. It is hard to have an estimation of the ideal case, but the time
+should be increasing, since cores need to compete for the same cache line, and
+other threads can't proceed when the lock is being held by one thread.
+
+In this benchmark, each thread iterates for $10^6$ times.
+In table ~\ref{fig:com_mutex}, we can see the execution time of this micro-benchmark.
+From this benchmark, we can see that the overhead does not increase significantly
+as the number of cores increases, so we can say that the virtual machine system
+does not have scalability issues here.
+We can also see that the time increases as the number of threads increases, but
+it sometimes increases slower than the number of threads, and sometimes increases
+faster. It seems like that there are complex factors which affects the execution
+time in this case, and these factors present in both the virtualized system and the
+native system.
+
+We can also notice that, for 4 threads, the execution time is irregularly large
+for the native case. We don't have an explain for this now, but we suspect that
+this may be caused by specific architecture of the cores, or some special
+on-chip communication pattens created by this configuration.
+
+\begin{figure}[here]
+\begin{tabular}{  l | l | l | l }
+	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
+	1 & 1.092 & 0.04 & 2630.00 \\
+	2 & 5.268 & 0.15 & 3412.00 \\
+	4 & 12.300 & 2.34 & 425.64 \\
+	8 & 39.184 & 1.21 & 3138.35 \\
+	16 & 42.908 & 1.67 & 2469.34 \\
+	32 & 79.256 & 2.86 & 2671.19 \\
+\end{tabular}
+\caption{Execution time of the shared lock micro-benchmark}
+\label{fig:com_mutex}
+\end{figure}
+
+
+\subsection{Barrier}
+Barrier is also a frequently used synchronization method in multi-threaded
+programs, especially in the scientific computation programs, since the
+algorithms used in these programs can usually be easily expressed with the
+barrier synchronization method. So we created a micro-benchmark to evaluate
+the performance of the virtual machine when programs use this synchronization
+method.
+
+In this micro-benchmark, we create a bunch of threads. We also initialize
+a barrier to wait for all the threads each time. Then, all the threads
+repeatedly call {\em barrier} to enter the barrier. When all the threads
+reach the barrier, they are released, and in the next iteration, they will
+enter the barrier again.
+
+In this micro-benchmark, each thread iterates for $10^4$ times.
+In table ~\ref{fig:barrier}, we can see the execution time of this micro-benchmark.
+From this table, we can see that the overhead of the virtual machine is nearly
+constant across different number of threads. This implies that the virtual
+machine system does not have scalability issues in this benchmark.
+We can also see that the execution time increases faster than the number of
+threads. Ideally, this should not happen, since each core should reach the
+barrier at the same time, and then be released from the barrier, so increasing
+the number of cores should not increase the execution time. However, the cores
+would differ in speed slightly due to various reasons, so more threads we have, 
+more time the threads may need to wait. This may explain this observation.
+
+\begin{figure}[here]
+\begin{tabular}{  l | l | l | l }
+	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
+	1 & 0.160 & 0.01 & 1500.00 \\
+	2 & 3.111 & 0.35 & 788.86 \\
+	4 & 12.692 & 1.29 & 883.88 \\
+	8 & 25.420 & 3.08 & 725.32 \\
+	16 & 58.016 & 6.98 & 731.17 \\
+	32 & 121.680 & 13.35 & 811.46 \\
+\end{tabular}
+\caption{Execution time of the barrier micro-benchmark}
+\label{fig:barrier}
+\end{figure}
+
+\subsection{Results}
+After analysing the results of micro-benchmarks, we conclude that the virtual
+machine system does not have notable scalability problems for the
+synchronization operations.
 
