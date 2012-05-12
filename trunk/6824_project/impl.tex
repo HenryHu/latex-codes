@@ -1,0 +1,17 @@
+\section{Implementation and Experiment Setup}
+
+To evaluate the scalability of multithreaded programs in QEMU emulator, we 
+setup QEMU with COREMU on a 48-processor AMD machine with Linux 2.6.32 running
+on it. In QEMU, we setup a modified Debian for the only guest OS running. 
+Benchmark applictions, Splash2 benchmarks and REDIS, are installed on both 
+host OS and guest OS to obtain comparison result. 
+
+\paragraph{QEMU} [fixme, this is from wiki]
+QEMU stands for "Quick EMUlator" and is a processor emulator that relies on dynamic binary translation to achieve a reasonable speed while being easy to port to new host CPU architectures.
+In conjunction with CPU emulation, it also provides a set of device models, allowing it to run a variety of unmodified guest operating systems; it can thus be viewed as a hosted virtual machine monitor. It also provides an accelerated mode for supporting a mixture of binary translation (for kernel code) and native execution (for user code), in the same fashion as VMware Workstation and VirtualBox. QEMU can also be used purely for CPU emulation for user level processes, allowing applications compiled for one architecture to be run on another.
+
+\paragraph{COREMU}
+
+\paragraph{Splash2}
+\paragraph{REDIS}
+\paragraph{COREMU}
