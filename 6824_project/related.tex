@@ -1,4 +1,5 @@
-\subsection{Previous Work}
+\section{Related Work}
+\label{sec:rel}
 
 \paragraph{Linux Kernel Scalability} Operating system kernel schedules the
 execution of multithreaded programs and handles I/O requests for 
@@ -19,8 +20,14 @@ gmake &App: Serial stages and stragglers \\
 pedsort &HW: Cache capacity \\
 Metis &HW: DRAM throughpu 
 \end{tabular}
-\includegraphics[width=0.8\linewidth]{figures/memcachced_scal.png}
 \end{center}
+
+\paragraph{Sigificant Overhead in Multicore Virtualization} HiuShan 
+\cite{rel:hiushan} addressed the significant overhead of multicore support
+in virtual machines in his thesis. Hiushan choose VMWare as the target VM
+where Oracle is carefully evaluted for many different operatings on some 
+configurations of cores. In the end HiuShan reached the conclusion that VMWare
+caused degradation of Oracle parallelism. 
 
 %In subsections there is 1 blank line before the section 
 %heading and one afterwards.  Heading text is 11 point 
