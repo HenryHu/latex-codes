@@ -1,4 +1,21 @@
-\section{Evaluation}
+\section{Results and Analysis}
+\label{sec:res}
+
+In this section, we will demonstrate the performance and scalability of our 
+selected benchmarks on both host OS and COREMU. These results basically confirms
+some of our hypothesis. And finally we're going to see the microbenchmark results. 
+
+First, we'll take a look at the following figures that show the speedup on 
+SPLASH-2 and Redis. 
+Along the x-axis, we scale the number of processors from 1 to 32. 
+The vertical direction shows the speed-up compared to a single-core execution. 
+
+\subsection{SPLASH-2}
+
+Following two figures illustrate the parallelism of SPLASH-2 benchmarks on both QEMU
+and native machine. The x-axis indicates the number of cores, which scales from 1
+to 32. The y-axis shows the speed-up compared to the performance of one-core
+emulation.
 
 \begin{figure}[H]
 \center
@@ -14,21 +31,7 @@
 \label{fig:splash2_native}
 \end{figure}
 
-\begin{figure}[H]
-\center
-\includegraphics[width=0.8\linewidth]{figures/redis_qemu.png}
-\caption{QEMU, REDIS}
-\label{fig:redis_vm}
-\end{figure}
-
-\begin{figure}[H]
-\center
-\includegraphics[width=0.8\linewidth]{figures/redis_native.png}
-\caption{Native, REDIS}
-\label{fig:redis_native}
-\end{figure}
-
-
+The following table illustrates detailed numbers of the speedup.
 \begin{figure}[here]
 	\center
 	\begin{tabular}{ l | p{2cm} | p{3cm} | p{3cm} | l }
@@ -65,17 +68,6 @@ OCEAN	&	1	&	1	&	1	&	1	\\
 \caption{Relative speedup of the benchmarks}
 \label{fig:relspeedup}
 \end{figure}
-
-From figures ~\ref{fig:redis_vm}, ~\ref{fig:redis_native}, we can see
-that REDIS has nearly no scalability in the native environment, and it
-only can scale to 2 cores in the virtualized environment. With more than
-2 cores, its execution time is nearly constant. It does not run faster
-with more cores, and it also does not suffer from more cores. We suspect
-that the reason is that the network bandwidth limited the performance
-of the REDIS server before the computation resources available from the
-CPU become a problem. We partially verified this by looking at the network
-bandwidth used and finding that the network usage is nearly full during
-the benchmark.
 
 From figures ~\ref{fig:splash2_vm}, ~\ref{fig:splash2_native} and
 table ~\ref{fig:relspeedup}, 
@@ -151,3 +143,32 @@ is obtained with 16 threads. With an even larger matrix with 2050x2050
 elements, the speedup keeps increasing as the number of threads increases,
 and with the maximum number of threads the speedup has its maximum value,
 which means that it may further increase with more threads.
+
+\subsection{REDIS}
+\begin{figure}[H]
+\center
+\includegraphics[width=0.8\linewidth]{figures/redis_qemu.png}
+\caption{QEMU, REDIS}
+\label{fig:redis_vm}
+\end{figure}
+
+\begin{figure}[H]
+\center
+\includegraphics[width=0.8\linewidth]{figures/redis_native.png}
+\caption{Native, REDIS}
+\label{fig:redis_native}
+\end{figure}
+
+
+From figures ~\ref{fig:redis_vm}, ~\ref{fig:redis_native}, we can see
+that REDIS has nearly no scalability in the native environment, and it
+only can scale to 2 cores in the virtualized environment. With more than
+2 cores, its execution time is nearly constant. It does not run faster
+with more cores, and it also does not suffer from more cores. We suspect
+that the reason is that the network bandwidth limited the performance
+of the REDIS server before the computation resources available from the
+CPU become a problem. We partially verified this by looking at the network
+bandwidth used and finding that the network usage is nearly full during
+the benchmark.
+
+

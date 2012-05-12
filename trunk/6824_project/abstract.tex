@@ -2,14 +2,19 @@
 \subsection*{\centering Abstract}
 %IEEE allows italicized abstract
 {\em
+Parallel computing is playing a critical role in state of the art of 
+computation power. The rapid growth of core number is making programs 
+running at the most fast speed ever. However, limited by programming 
+language and operating system infrastructures, parallel programs might 
+not be able to benefit from hardware cores exhaustively. In this report, 
+we studied the influence of VMs/emulators on program's parallelism. 
+SPLASH-2, REDIS and carefully designed microbenchmarks are carefully selected
+and evaluated on QEMU scaled from 1-processor to 32-processor.
 
-DRAFT: Parallelism of software programs is influenced by many factors 
-including code quality, underlying infrastructure, I/O bandwidth, and,
-maybe VMM. In this report, we tend to evaluate the influence of VMM on 
-modern multi-threaded programs and diagnose potential issues that limit 
-the parallelism on virtual machines. 
-
-palapala
+Based on the performance results, we concluded that QEMU incurs
+certain parallelism bottleneck for particular programs, including FFT in 
+SPLASH2-2, but scales well for any basic synchronization operations.
+In addition, I/O bound programs scale poors in both native OS and guest OS.
 
 %end italics mode
 }
