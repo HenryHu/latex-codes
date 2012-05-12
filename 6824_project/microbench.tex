@@ -1,10 +1,11 @@
-\section{Microbenchmarks}
+\subsection{Microbenchmarks}
+\label{sec:mic}
 To evaluate our hypothesis, we created several microbenchmarks, and we inspected
 the results to see if the scalability problems come from these aspects.
 In these experiments, we run each experiment for 5 times and take the average
 as the result.
 
-\subsection{Lock}
+\subsubsection{Lock}
 We created two micro-benchmarks to evaluate the performance of the virtual
 machine when compared with the performance of the native case.
 
@@ -84,7 +85,7 @@ on-chip communication pattens created by this configuration.
 
 
 
-\subsection{Barrier}
+\subsubsection{Barrier}
 Barrier is also a frequently used synchronization method in multi-threaded
 programs, especially in the scientific computation programs, since the
 algorithms used in these programs can usually be easily expressed with the
@@ -125,7 +126,7 @@ would differ in speed slightly due to various reasons, so more threads we have,
 more time the threads may need to wait. This may explain this observation.
 
 
-\subsection{Source}
+\subsubsection{Source}
 Here is the program we used to evaluate the performance of barriers. Other 
 micro-benchmark programs are similar to this one.
 \lstset{language=c}
@@ -133,7 +134,7 @@ micro-benchmark programs are similar to this one.
 \lstset{captionpos=b}
 \lstinputlisting{test-barrier.c}
 
-\subsection{Results}
+\subsubsection{Results}
 After analysing the results of micro-benchmarks, we conclude that the virtual
 machine system does not have notable scalability problems for the
 synchronization operations.

@@ -31,16 +31,34 @@ In this project, we target the influence of virtual machines/emulators on
 the parallelism of multithreaded programs. Here're some reasons why we choose
 VM/emulator for study.
 \begin{itemize}
-\item It has been a short time from VMs/emulators start to support multicore
+\item Vritualization techniques abstracts the hardware from operating system 
+and enables multiple operating systems running on shared hardware resources
+simutaneously. It's very important to schedule the resources between different
+guest OS to keep all fast and alive. To achieve this goal, improve program 
+parallelism to use hardware computing power exaustively is necessary.
+\item It has been only a short time from VMs/emulators start to support multicore
 systems. Developers and researchers might not be able to do careful study 
-on parallelism support of general mulithreaded programs.
-\item VMs/emulators have to somehow control the schedule of CPU slices 
+on parallelism support of general mulithreaded programs. Even today some 
+CPU architectures are not well supported for multiprocessor virtualization.
+\begin{table}
+\center
+\begin{tabular}{c|c}
+Virtual Machine/Emulator & Support parallelization from \\
+\hline
+QEMU & 2010\cite{rel:qemuwiki} \\
+VMWare & 2008\cite{rel:vm55} \\
+Xen & 2005\cite{rel:xenpar}\cite{rel:xen} 
+\end{tabular}
+\end{table}
+\item VMs/emulators have to control the schedule of CPU slices 
 without careful consideration of what's running on the guest machine. 
 \item Many VMs/emulators are open-source.
 \end{itemize}
 
-We selected QEMU as emulator to run some popular multithreaded benchmarks
-(splash2, REDIS), as well as some dedicated microbenchmarks to evalute 
+After considering both history and simplicity, we selected QEMU for our 
+experiment purpure. QEMU is a used as a system emulator to run popular 
+multithreaded benchmarks
+(splash2, REDIS), as well as some dedicated microbenchmarks. Hereby we evalute 
 specific parallelization properties. Here're briefly our results. 
 
 \begin{enumerate}

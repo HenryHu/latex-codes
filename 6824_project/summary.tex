@@ -1,6 +1,30 @@
-\section{Summary and Conclusions}
-This template will get you through the minimum article, 
-i.e. no figures or equations.  To include those, please 
-refer to your LaTeX manual and the IEEE publications 
-guidelines.  Good Luck!
+\section{Discussion}
+
+\paragraph{FFT Scalability Degeneration} Recall the scalability degeneration of FFT
+we have seen in figure ~\ref{fig:splash2_vm} and ~\ref{fig:splash2_native}. This 
+cannot be explained by extra overhead caused by synchronization operations across
+threads, as proved in the microbenchmarks. For future research purpose, we suspect
+this is caused by implementation of COREMU. First, COREMU doesn't directly emulate
+logic cores on different physical cores but sets up logic cores as kernel threads 
+and leaves the scheduling to the host OS kernel. Because the host OS kernel has 
+no knowledge of guest OS processes, it cannot make any optimizations to cache line
+or data locality. Second, COREMU changes the implementation of system clock, which
+might influence the scheduling of guest OS kernel and applications.
+
+\paragraph{QEMU Paralleliation} QEMU emulator applies binary translation on a large
+part of emulation and introduces notable overhead for this. The parallelization
+implementation, COREMU, however introduces more overhead. COREMU consumes 3 
+processors when the guest OS is free and $3 + x$ processors where $x$ is the 
+number of virtual cores in guest OS. Another parallelization approach, 
+\emph{PQEMU}, which claims better performance of emulation, might be an alternative
+choice for the scalability evalutaion. 
+
+\section{Conclusion}
+Parallel programs are playing a critical role in state of the art of computing,
+so that it's important to narrow the gap between a carefully optimized code and 
+a highly parallelized process. In this report, we studied the influence of 
+QEMU on program's parallelism. Based on the evaluation on SPLASH-2, REDIS and 
+carefully designed microbenchmarks we reached the conclusion that QEMU incurs
+parallelism bottleneck for particular programs but scales well for any basic
+synchronization operations.
 
