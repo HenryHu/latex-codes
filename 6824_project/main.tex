@@ -4,14 +4,18 @@
 %written by Matthew Ward, CS Department, Worcester Polytechnic Institute. 
 %use at your own risk. Complaints to /dev/null.
 %make two column with no page numbering, default is 10-point 
-\documentstyle[11pt,psfig,graphicx,float,setspace]{article}
-%\documentclass[psfig, 11pt]{article}
+%\documentstyle[11pt,psfig,graphicx,float,setspace]{article}
+\documentclass[psfig, 11pt]{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{setspace}
+
 \pagestyle{empty}
 %set dimensions of columns, gap between columns, and paragraph indent 
 \setlength{\textheight}{8.75in}
 \setlength{\columnsep}{2.0pc}
 \setlength{\textwidth}{6.8in}
-\setlength{\footheight}{0.0in}
+%\setlength{\footheight}{0.0in}
 \setlength{\topmargin}{0.0in}
 \setlength{\headheight}{0.0in}
 \setlength{\headsep}{0.0in}
