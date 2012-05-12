@@ -16,18 +16,6 @@ cores.  However, since these locks are allocated in the same array, they usually
 stay on the same cache line, so the cores may still compete for the cache line,
 so there would be some overhead.
 
-In this benchmark, each thread iterates for $10^7$ times.
-In table ~\ref{fig:sep_mutex}, we can see the execution time of the
-microbenchmark in the virtual machine and in the native environment.
-From this table, we can see that the overhead of the virtual machine reduces as
-the number of cores increases at first, and then keeps at a constant level.
-It seems like that the virtual machine does not have scalability problem in
-this micro-benchmark.
-We can also observe that the execution time does not increase much as the
-number of threads increases. This meets our expectation that the execution
-time should keep still. The small increase may be caused by the cache
-contention problem, that different cores compete for the same cache line.
-
 \begin{figure}[here]
 \begin{tabular}{  l | l | l | l  }
 	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
@@ -42,6 +30,19 @@ contention problem, that different cores compete for the same cache line.
 \label{fig:sep_mutex}
 \end{figure}
 
+In this benchmark, each thread iterates for $10^7$ times.
+In table ~\ref{fig:sep_mutex}, we can see the execution time of the
+microbenchmark in the virtual machine and in the native environment.
+From this table, we can see that the overhead of the virtual machine reduces as
+the number of cores increases at first, and then keeps at a constant level.
+It seems like that the virtual machine does not have scalability problem in
+this micro-benchmark.
+We can also observe that the execution time does not increase much as the
+number of threads increases. This meets our expectation that the execution
+time should keep still. The small increase may be caused by the cache
+contention problem, that different cores compete for the same cache line.
+
+
 In the second micro-benchmark, we also create some threads. But in this
 benchmark, all the threads try to lock and unlock the same lock. So, all the
 threads compete for the same lock, and it is expected that there would be many
@@ -50,6 +51,20 @@ would be frequently transferred between different cores, and this would cause
 much overhead. It is hard to have an estimation of the ideal case, but the time
 should be increasing, since cores need to compete for the same cache line, and
 other threads can't proceed when the lock is being held by one thread.
+
+\begin{figure}[here]
+\begin{tabular}{  l | l | l | l }
+	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
+	1 & 1.092 & 0.04 & 2630.00 \\
+	2 & 5.268 & 0.15 & 3412.00 \\
+	4 & 12.300 & 2.34 & 425.64 \\
+	8 & 39.184 & 1.21 & 3138.35 \\
+	16 & 42.908 & 1.67 & 2469.34 \\
+	32 & 79.256 & 2.86 & 2671.19 \\
+\end{tabular}
+\caption{Execution time of the shared lock micro-benchmark}
+\label{fig:com_mutex}
+\end{figure}
 
 In this benchmark, each thread iterates for $10^6$ times.
 In table ~\ref{fig:com_mutex}, we can see the execution time of this micro-benchmark.
@@ -67,19 +82,6 @@ for the native case. We don't have an explain for this now, but we suspect that
 this may be caused by specific architecture of the cores, or some special
 on-chip communication pattens created by this configuration.
 
-\begin{figure}[here]
-\begin{tabular}{  l | l | l | l }
-	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
-	1 & 1.092 & 0.04 & 2630.00 \\
-	2 & 5.268 & 0.15 & 3412.00 \\
-	4 & 12.300 & 2.34 & 425.64 \\
-	8 & 39.184 & 1.21 & 3138.35 \\
-	16 & 42.908 & 1.67 & 2469.34 \\
-	32 & 79.256 & 2.86 & 2671.19 \\
-\end{tabular}
-\caption{Execution time of the shared lock micro-benchmark}
-\label{fig:com_mutex}
-\end{figure}
 
 
 \subsection{Barrier}
@@ -96,18 +98,6 @@ repeatedly call {\em barrier} to enter the barrier. When all the threads
 reach the barrier, they are released, and in the next iteration, they will
 enter the barrier again.
 
-In this micro-benchmark, each thread iterates for $10^4$ times.
-In table ~\ref{fig:barrier}, we can see the execution time of this micro-benchmark.
-From this table, we can see that the overhead of the virtual machine is nearly
-constant across different number of threads. This implies that the virtual
-machine system does not have scalability issues in this benchmark.
-We can also see that the execution time increases faster than the number of
-threads. Ideally, this should not happen, since each core should reach the
-barrier at the same time, and then be released from the barrier, so increasing
-the number of cores should not increase the execution time. However, the cores
-would differ in speed slightly due to various reasons, so more threads we have, 
-more time the threads may need to wait. This may explain this observation.
-
 \begin{figure}[here]
 \begin{tabular}{  l | l | l | l }
 	Number of threads & Time in the VM (s) & Time in the native environment (s) & Overhead(\%) \\
@@ -121,6 +111,27 @@ more time the threads may need to wait. This may explain this observation.
 \caption{Execution time of the barrier micro-benchmark}
 \label{fig:barrier}
 \end{figure}
+
+In this micro-benchmark, each thread iterates for $10^4$ times.
+In table ~\ref{fig:barrier}, we can see the execution time of this micro-benchmark.
+From this table, we can see that the overhead of the virtual machine is nearly
+constant across different number of threads. This implies that the virtual
+machine system does not have scalability issues in this benchmark.
+We can also see that the execution time increases faster than the number of
+threads. Ideally, this should not happen, since each core should reach the
+barrier at the same time, and then be released from the barrier, so increasing
+the number of cores should not increase the execution time. However, the cores
+would differ in speed slightly due to various reasons, so more threads we have, 
+more time the threads may need to wait. This may explain this observation.
+
+
+\subsection{Source}
+Here is the program we used to evaluate the performance of barriers. Other 
+micro-benchmark programs are similar to this one.
+\lstset{language=c}
+\lstset{caption=Source code for the barrier micro-benchmark}
+\lstset{captionpos=b}
+\lstinputlisting{test-barrier.c}
 
 \subsection{Results}
 After analysing the results of micro-benchmarks, we conclude that the virtual
