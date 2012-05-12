@@ -1,0 +1,36 @@
+\section{Hypothesis}
+To reason about the scalability problems which are only present in the
+virtualized environment, we investigated the design and implementation
+of the QEMU virtual machine, and the COREMU system, and proposed some
+possible hypothesis for the scalability problems:
+
+\begin{itemize}
+	\item Atomic operations between virtual cores may be more expensive
+		than the same operations between real cores.\\
+		Atomic operations require extra work to keep the results correct.
+		In real systems, these works are usually done by the hardware.
+		Most architectures have specific atomic instructions to perform
+		atomic operations. In the virtualized envrionment, hardware is
+		emulated by the virtual machine monitor. In this case, emulating
+		atomic instructions may be expensive, since this requires
+		inter-thread communications and synchronizations.
+	\item Scheduling virtual cores onto real cores and migrating them
+		between different cores may incur extra overhead. \\
+		Virtual machine monitors need to map virtual cores onto real cores.
+		They use scheduling algorithms to decide which virtual cores should
+		be mapped to each real core. If the scheduling algorithm is not
+		correctly designed, it may cause slowdown. For example, if the
+		virtual machine monitor migrates virtual core from one real core
+		to another frequently, it would have huge impact on the performance,
+		since the cache would be flushed frequently, and data needs to be
+		reloaded when being used on a new core.
+	\item Communication between virtual cores may be harder to scale
+		than communication between real cores. \\
+		In the native environment, inter-core communications are implemented
+		through Inter Processor Interrupts(IPIs), shared-memory accesses,
+		and other methods. To keep the cache coherent, cache coherence
+		protocols are usually run between caches in different cores. In
+		the virtualized environment, all these methods need to be implemented
+		in the virtual machine monitor. Although shared-memory accesses may
+		not be affected, other methods may have significant overhead.
+\end{itemize}
